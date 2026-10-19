@@ -12,8 +12,16 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+}
+
+/*
+ * Non-inlined sans token: `font-sans` utilities compile to
+ * `font-family: var(--font-sans)`, so the html[dir="rtl"] override
+ * below can swap it to IRANYekanX on Persian (RTL) pages.
+ */
+@theme {
+  --font-sans: var(--font-geist-sans);
 }
 
 /* Persian (RTL) renders with IRANYekanX instead of Geist. */
