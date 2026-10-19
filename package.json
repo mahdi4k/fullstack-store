@@ -1,0 +1,23 @@
+{
+  "name": "my-store",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "dev:api": "npm run start:dev --workspace=@my-store/api",
+    "dev:web": "npm run dev --workspace=@my-store/web",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "format": "prettier --write \"apps/**/*.{ts,tsx,js,json}\" \"packages/**/*.{ts,tsx,js,json}\""
+  },
+  "devDependencies": {
+    "prettier": "^3.4.2",
+    "turbo": "^2.4.4"
+  },
+  "packageManager": "npm@12.2.0"
+}

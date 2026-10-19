@@ -1,0 +1,202 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  CUSTOMER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  password  String
+  name      String?
+  role      Role      @default(CUSTOMER)
+  orders    Order[]
+  cart      Cart?
+  reviews   Review[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Category {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  slug        String?   @unique
+  icon        String?
+  description String?
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model City {
+  id           Int           @id @default(autoincrement())
+  slug         String        @unique
+  name         String
+  active       Boolean       @default(true)
+  sortOrder    Int           @default(0)
+  cityProducts CityProduct[]
+  banners      Banner[]
+  vendors      Vendor[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Product {
+  id                 Int         @id @default(autoincrement())
+  name               String
+  slug               String?     @unique
+  description        String?
+  brand              String?
+  price              Float
+  discountPercent    Int         @default(0)
+  stock              Int         @default(0)
+  imageUrl           String?
+  serviceType        ProductType @default(PRODUCT)
+  compatibleVehicles String[]    @default([])
+  category           Category?   @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  categoryId         Int?
+  cityProducts       CityProduct[]
+  orderItems         OrderItem[]
+  cartItems          CartItem[]
+  reviews            Review[]
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+}
+
+/// Per-city inventory and pricing (the city price overrides Product.price
+/// when present). Prices are in Toman.
+model CityProduct {
+  id        Int      @id @default(autoincrement())
+  city      City     @relation(fields: [cityId], references: [id], onDelete: Cascade)
+  cityId    Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
+  price     Int
+  stock     Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([cityId, productId])
+}
+
+/// Promotional hero-slider banner, optionally scoped to a city.
+model Banner {
+  id        Int      @id @default(autoincrement())
+  title     String
+  subtitle  String?
+  imageUrl  String?
+  link      String?
+  city      City?    @relation(fields: [cityId], references: [id], onDelete: Cascade)
+  cityId    Int?
+  active    Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum ProductType {
+  PRODUCT
+  SERVICE_KIT
+}
+
+model Cart {
+  id        Int        @id @default(autoincrement())
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int        @unique
+  items     CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model CartItem {
+  id        Int      @id @default(autoincrement())
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  cartId    Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([cartId, productId])
+}
+
+model Order {
+  id              Int           @id @default(autoincrement())
+  user            User          @relation(fields: [userId], references: [id], onDelete: Restrict)
+  userId          Int
+  items           OrderItem[]
+  reviews         Review[]
+  totalAmount     Float
+  status          OrderStatus   @default(PENDING)
+  paymentStatus   PaymentStatus @default(PENDING)
+  shippingAddress String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId   Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+  productId Int
+  quantity  Int
+  price     Float
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  rating    Int
+  comment   String?
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
+  order     Order?   @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  orderId   Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// Verified local vendor (mechanic, oil-change center, battery shop)
+/// shown in the city storefront "فروشنده‌های شهر شما" rail.
+model Vendor {
+  id        Int      @id @default(autoincrement())
+  name      String
+  city      City     @relation(fields: [cityId], references: [id], onDelete: Cascade)
+  cityId    Int
+  address   String
+  rating    Float    @default(4.5)
+  services  String[] @default([])
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
