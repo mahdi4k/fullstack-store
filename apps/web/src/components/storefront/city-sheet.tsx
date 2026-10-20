@@ -77,7 +77,7 @@ export function CitySheet({
           {dict.store.city.conflictBody}
         </p>
       ) : null}
-      <ul className="grid grid-cols-3 gap-2 md:grid-cols-4 md:gap-2.5">
+      <ul className="grid grid-cols-3 gap-2">
         {list.map((city) => (
           <li key={city.slug}>
             <button

@@ -37,7 +37,7 @@ export function StorefrontHeader({ citySlug, cityName }: StorefrontHeaderProps) 
   return (
     <>
       <header className="sticky top-0 z-30 border-b border-zinc-200/70 bg-white/90 backdrop-blur dark:border-zinc-800 dark:bg-zinc-900/90">
-        <div className="mx-auto flex h-14 w-full max-w-md items-center gap-2 px-4 md:h-16 md:max-w-3xl lg:max-w-5xl">
+        <div className="mx-auto flex h-14 max-w-md items-center gap-2 px-4">
           <button
             aria-label={dict.store.header.back}
             onClick={() => router.back()}

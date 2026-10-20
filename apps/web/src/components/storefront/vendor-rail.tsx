@@ -9,11 +9,11 @@ import type { Vendor } from "@/lib/types";
 export function VendorRail({ vendors }: { vendors: Vendor[] }) {
   if (vendors.length === 0) return null;
   return (
-    <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-3 md:gap-3 md:overflow-visible lg:grid-cols-4">
+    <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {vendors.map((vendor) => (
         <article
           key={vendor.id}
-          className="flex w-56 flex-shrink-0 flex-col gap-1.5 rounded-2xl border border-zinc-200 bg-white p-3 dark:border-zinc-700 dark:bg-zinc-900 md:w-auto"
+          className="flex w-56 flex-shrink-0 flex-col gap-1.5 rounded-2xl border border-zinc-200 bg-white p-3 dark:border-zinc-700 dark:bg-zinc-900"
         >
           <div className="flex items-center justify-between gap-2">
             <h3 className="truncate text-sm font-bold text-zinc-900 dark:text-zinc-50">

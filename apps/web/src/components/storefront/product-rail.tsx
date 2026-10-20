@@ -14,10 +14,7 @@ interface ProductRailProps {
   viewAllHref?: string;
 }
 
-/**
- * Bundle-card rail: horizontal scroll on phones, an aligned card grid
- * (3-up tablet / 4-up desktop) on wider screens.
- */
+/** Horizontal scroll rail of bundle cards with a section header. */
 export function ProductRail({
   title,
   citySlug,
@@ -41,13 +38,13 @@ export function ProductRail({
           </Link>
         ) : null}
       </div>
-      <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-3 md:gap-4 md:overflow-visible md:pb-0 lg:grid-cols-4">
+      <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {products.map((product) => (
           <BundleCard
             key={product.id}
             product={product}
             citySlug={citySlug}
-            className="w-40 flex-shrink-0 md:w-auto"
+            className="w-40 flex-shrink-0"
           />
         ))}
       </div>

@@ -15,7 +15,6 @@ import { StickyCartBar } from "@/components/storefront/sticky-cart-bar";
 import { SupportBar } from "@/components/storefront/support-bar";
 import { SectionHeader } from "@/components/storefront/section-header";
 import { getDictionary, hasLocale } from "@/lib/i18n/dictionaries";
-import { CONTAINER } from "@/lib/layout";
 
 export async function generateMetadata({
   params,
@@ -63,11 +62,10 @@ async function StorefrontContent({ params }: PageProps) {
     <div
       dir={lang === "fa" ? "rtl" : "ltr"}
       lang={lang}
-      className="min-h-dvh bg-white dark:bg-zinc-950"
+      className="mx-auto min-h-dvh max-w-md bg-white px-4 pb-32 dark:bg-zinc-950"
     >
       <StorefrontHeader citySlug={city.slug} cityName={city.name} />
 
-      <div className={`${CONTAINER} pb-32`}>
       <div className="space-y-4 pt-3">
         {/* Live search by product name or car model */}
         <SearchBar citySlug={city.slug} />
@@ -116,7 +114,6 @@ async function StorefrontContent({ params }: PageProps) {
         {/* Support call bar */}
         <SupportBar />
       </div>
-      </div>
 
       {/* Floating cart summary */}
       <StickyCartBar />
@@ -126,12 +123,12 @@ async function StorefrontContent({ params }: PageProps) {
 
 function StorefrontSkeleton() {
   return (
-    <div className="min-h-dvh bg-white dark:bg-zinc-950">
-      <div className="flex h-14 items-center justify-between px-4">
+    <div className="mx-auto min-h-dvh max-w-md bg-white px-4 pb-32 dark:bg-zinc-950">
+      <div className="flex h-14 items-center justify-between">
         <Skeleton className="h-5 w-24 rounded-full" />
         <Skeleton className="h-5 w-16" />
       </div>
-      <div className={`${CONTAINER} space-y-4 pt-3`}>
+      <div className="space-y-4 pt-3">
         <Skeleton className="h-10 w-full rounded-xl" />
         <Skeleton className="h-40 w-full rounded-2xl" />
         <div className="grid grid-cols-3 gap-2">

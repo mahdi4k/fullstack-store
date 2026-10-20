@@ -11,7 +11,6 @@ import { QuickFilterPills } from "@/components/storefront/quick-filter-pills";
 import { SearchBar } from "@/components/storefront/search-bar";
 import { StickyCartBar } from "@/components/storefront/sticky-cart-bar";
 import { hasLocale, getDictionary } from "@/lib/i18n/dictionaries";
-import { CONTAINER } from "@/lib/layout";
 import type { Product } from "@/lib/types";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
@@ -97,11 +96,9 @@ async function CategoryContent({ params, searchParams }: PageProps) {
     <div
       dir={lang === "fa" ? "rtl" : "ltr"}
       lang={lang}
-      className="min-h-dvh bg-white dark:bg-zinc-950"
+      className="mx-auto min-h-dvh max-w-md bg-white px-4 pb-32 dark:bg-zinc-950"
     >
       <StorefrontHeader citySlug={citySlug} cityName={city.name} />
-
-      <div className={`${CONTAINER} pb-32`}>
 
       {/* Search field only on the search pseudo-category */}
       {categorySlug === "search" ? (
@@ -109,7 +106,6 @@ async function CategoryContent({ params, searchParams }: PageProps) {
           <SearchBar citySlug={citySlug} initialQuery={q} />
         </div>
       ) : null}
-
 
       <div className="space-y-3 pt-3">
         <QuickFilterPills citySlug={citySlug} />
@@ -131,7 +127,7 @@ async function CategoryContent({ params, searchParams }: PageProps) {
             {dict.store.listing.empty}
           </p>
         ) : (
-          <ul className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
+          <ul className="grid grid-cols-2 gap-3">
             {products.map((product) => (
               <li key={product.id}>
                 <BundleCard product={product} citySlug={citySlug} />
@@ -141,8 +137,6 @@ async function CategoryContent({ params, searchParams }: PageProps) {
         )}
       </div>
 
-      </div>
-
       <StickyCartBar />
     </div>
   );
@@ -150,12 +144,12 @@ async function CategoryContent({ params, searchParams }: PageProps) {
 
 function ListSkeleton() {
   return (
-    <div className="min-h-dvh bg-white dark:bg-zinc-950">
-      <div className="flex h-14 items-center justify-between px-4">
+    <div className="mx-auto min-h-dvh max-w-md bg-white px-4 pb-32 dark:bg-zinc-950">
+      <div className="flex h-14 items-center justify-between">
         <Skeleton className="h-5 w-24 rounded-full" />
         <Skeleton className="h-5 w-16" />
       </div>
-      <div className={`${CONTAINER} grid grid-cols-2 gap-3 pt-4 md:grid-cols-3 lg:grid-cols-4`}>
+      <div className="grid grid-cols-2 gap-3 pt-4">
         {Array.from({ length: 6 }, (_, i) => (
           <Skeleton key={i} className="h-56 rounded-2xl" />
         ))}

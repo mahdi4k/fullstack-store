@@ -35,7 +35,7 @@ export function CategoryGrid({
   const { locale } = useI18n();
 
   return (
-    <ul className="grid grid-cols-3 gap-2 md:grid-cols-6 md:gap-3">
+    <ul className="grid grid-cols-3 gap-2">
       {categories.map((category) => {
         const Icon = ICONS[category.icon ?? ""] ?? CircleDot;
         return (

@@ -54,7 +54,7 @@ export function BottomSheet({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 mx-auto max-w-md md:max-w-xl">
+    <div className="fixed inset-0 z-50 mx-auto max-w-md">
       {/* Backdrop */}
       <button
         aria-label="close"
