@@ -19,7 +19,7 @@ export function QuickFilterPills({ citySlug }: { citySlug: string }) {
   const { dict, locale } = useI18n();
 
   return (
-    <div className="sticky top-14 z-20 -mx-4 border-b border-zinc-100 bg-white px-4 py-2 dark:border-zinc-800 dark:bg-zinc-900">
+    <div className="sticky top-14 z-20 border-b border-zinc-100 bg-white px-4 py-2 dark:border-zinc-800 dark:bg-zinc-900">
       <div className="flex gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <Link
           href={`/${locale}/city/${citySlug}/category/offers`}
