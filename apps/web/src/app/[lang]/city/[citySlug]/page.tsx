@@ -62,7 +62,7 @@ async function StorefrontContent({ params }: PageProps) {
     <div
       dir={lang === "fa" ? "rtl" : "ltr"}
       lang={lang}
-      className="mx-auto min-h-dvh max-w-md bg-white px-4 pb-32 dark:bg-zinc-950"
+      className="mx-auto min-h-dvh max-w-md bg-white px-4 pb-32 dark:bg-zinc-950 md:max-w-xl"
     >
       <StorefrontHeader citySlug={city.slug} cityName={city.name} />
 
@@ -123,7 +123,7 @@ async function StorefrontContent({ params }: PageProps) {
 
 function StorefrontSkeleton() {
   return (
-    <div className="mx-auto min-h-dvh max-w-md bg-white px-4 pb-32 dark:bg-zinc-950">
+    <div className="mx-auto min-h-dvh max-w-md bg-white px-4 pb-32 dark:bg-zinc-950 md:max-w-xl">
       <div className="flex h-14 items-center justify-between">
         <Skeleton className="h-5 w-24 rounded-full" />
         <Skeleton className="h-5 w-16" />

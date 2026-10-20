@@ -20,7 +20,7 @@ export function StickyCartBar() {
     <div className="fixed inset-x-0 bottom-0 z-30 px-4 pb-3">
       <Link
         href={`/${locale}/cart`}
-        className="mx-auto flex max-w-md items-center justify-between rounded-2xl bg-emerald-600 px-4 py-3 text-white shadow-lg shadow-emerald-600/30"
+        className="mx-auto flex max-w-md items-center justify-between rounded-2xl bg-emerald-600 px-4 py-3 text-white shadow-lg shadow-emerald-600/30 md:max-w-xl"
       >
         <span className="flex items-center gap-2 text-xs font-medium">
           <span className="relative">
