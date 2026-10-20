@@ -42,7 +42,7 @@ export function CityGateSheet() {
 
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center bg-zinc-50 px-4 dark:bg-zinc-950">
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-md md:max-w-2xl">
         <div className="mb-8 text-center">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-lg">
             <MapPin className="h-8 w-8" />
@@ -55,7 +55,7 @@ export function CityGateSheet() {
           </p>
         </div>
 
-        <ul className="grid grid-cols-3 gap-2">
+        <ul className="grid grid-cols-3 gap-2 md:grid-cols-4 lg:grid-cols-5">
           {isLoading && busy === null
             ? Array.from({ length: 6 }, (_, i) => (
                 <li key={i}>

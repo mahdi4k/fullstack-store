@@ -16,7 +16,7 @@ export function HeroSlider({ banners }: { banners: Banner[] }) {
           <Link
             key={banner.id}
             href={banner.link ?? "#"}
-            className="flex w-full flex-shrink-0 snap-center flex-col justify-center gap-1 rounded-2xl bg-gradient-to-l from-emerald-700 to-emerald-500 px-5 py-6 text-white dark:from-emerald-800 dark:to-emerald-600"
+            className="flex w-full flex-shrink-0 snap-center flex-col justify-center gap-1 rounded-2xl md:w-[calc(50%-0.375rem)] lg:w-[calc(33.333%-0.5rem)] bg-gradient-to-l from-emerald-700 to-emerald-500 px-5 py-6 text-white dark:from-emerald-800 dark:to-emerald-600"
           >
             <span className="text-base font-extrabold">{banner.title}</span>
             {banner.subtitle ? (

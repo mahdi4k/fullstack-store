@@ -12,6 +12,8 @@ import { BundleContents } from "@/components/storefront/bundle-contents";
 import { ReviewSheetLauncher } from "@/components/storefront/review-sheet-launcher";
 import { SupportBar } from "@/components/storefront/support-bar";
 import { fill, getDictionary, hasLocale } from "@/lib/i18n/dictionaries";
+import { CONTAINER } from "@/lib/layout";
+import { BundleQty } from "@/components/storefront/bundle-qty";
 import { formatPercent } from "@/lib/format";
 import { Wrench, CreditCard } from "lucide-react";
 
@@ -60,12 +62,14 @@ async function ProductContent({ params }: PageProps) {
     <div
       dir={lang === "fa" ? "rtl" : "ltr"}
       lang={lang}
-      className="mx-auto min-h-dvh max-w-md bg-white px-4 pb-40 dark:bg-zinc-950"
+      className="min-h-dvh bg-white dark:bg-zinc-950"
     >
       <StorefrontHeader citySlug={citySlug} cityName={city.name} />
 
-      {/* Gallery placeholder */}
-      <div className="relative mt-3 flex h-64 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-50 to-zinc-100 dark:from-emerald-950/40 dark:to-zinc-800">
+      <div className={`${CONTAINER} pb-40 pt-3`}>
+      <div className="md:grid md:grid-cols-5 md:items-start md:gap-8">
+      {/* Gallery — sticky visual column on desktop */}
+      <div className="relative flex h-64 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-50 to-zinc-100 dark:from-emerald-950/40 dark:to-zinc-800 md:sticky md:top-20 md:col-span-2 md:h-80">
         {discount > 0 ? (
           <span className="absolute top-3 start-3 rounded-full bg-red-600 px-2.5 py-1 text-[11px] font-bold text-white">
             {formatPercent(discount, lang)}
@@ -76,7 +80,7 @@ async function ProductContent({ params }: PageProps) {
         ) : null}
       </div>
 
-      <div className="mt-4 space-y-4">
+      <div className="mt-4 space-y-4 md:col-span-3 md:mt-0">
         {/* Title + service inclusion badge */}
         <div>
           <h1 className="text-base font-extrabold leading-7 text-zinc-900 dark:text-zinc-50">
@@ -123,7 +127,15 @@ async function ProductContent({ params }: PageProps) {
         <SupportBar />
       </div>
 
-      {/* Sticky price + add-to-cart bar */}
+        {/* Desktop inline add-to-cart (sticky bar is mobile-only) */}
+        <div className="hidden md:block lg:max-w-64">
+          <BundleQty product={product} citySlug={citySlug} />
+        </div>
+      </div>
+      </div>
+
+      {/* Sticky price + add-to-cart bar (mobile only) */}
+      <div className="md:hidden">
       <ProductStickyBar
         productId={product.id}
         productSlug={product.slug ?? String(product.id)}
@@ -133,6 +145,7 @@ async function ProductContent({ params }: PageProps) {
         discount={discount}
         soldOut={cityStock <= 0}
       />
+      </div>
 
       {/* Floating cart summary */}
       <StickyCartBar />
@@ -142,8 +155,8 @@ async function ProductContent({ params }: PageProps) {
 
 function ProductSkeleton() {
   return (
-    <div className="mx-auto min-h-dvh max-w-md bg-white px-4 pb-40 dark:bg-zinc-950">
-      <div className="flex h-14 items-center justify-between">
+    <div className="min-h-dvh bg-white dark:bg-zinc-950">
+      <div className="flex h-14 items-center justify-between px-4">
         <Skeleton className="h-5 w-24 rounded-full" />
         <Skeleton className="h-5 w-16" />
       </div>

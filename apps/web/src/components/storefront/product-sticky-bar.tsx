@@ -71,7 +71,7 @@ export function ProductStickyBar({
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-30 px-4 pb-3">
-      <div className="mx-auto flex max-w-md items-center justify-between gap-3 rounded-2xl border border-zinc-200 bg-white p-3 shadow-xl dark:border-zinc-700 dark:bg-zinc-900">
+      <div className="mx-auto flex max-w-md items-center justify-between gap-3 rounded-2xl border border-zinc-200 bg-white p-3 shadow-xl dark:border-zinc-700 dark:bg-zinc-900 md:max-w-3xl lg:max-w-4xl">
         {/* Price block */}
         <div className="min-w-0">
           {discount > 0 ? (
