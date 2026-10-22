@@ -1,6 +1,6 @@
 "use client";
 
-import { formatMoney } from "@/lib/format";
+import { formatToman } from "@/lib/format";
 import { useI18n } from "@/components/providers/locale-provider";
 import { ProductImage } from "@/components/store/product-image";
 
@@ -31,7 +31,7 @@ export function SummaryRow({ item }: { item: CheckoutItemSummary }) {
         <p className="text-xs text-zinc-500 dark:text-zinc-400">× {item.quantity}</p>
       </div>
       <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-        {formatMoney(item.price * item.quantity, locale)}
+        {formatToman(item.price * item.quantity, locale)}
       </p>
     </li>
   );

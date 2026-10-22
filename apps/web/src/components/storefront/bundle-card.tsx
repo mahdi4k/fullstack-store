@@ -36,25 +36,35 @@ export function BundleCard({
         className
       )}
     >
-      {/* Placeholder image area (products have no photos yet) */}
+      {/* Photo, or gradient placeholder until supplier images arrive */}
       <Link
         href={`/${locale}/city/${citySlug}/product/${product.slug ?? product.id}`}
-        className="relative mb-2 flex h-24 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-50 to-zinc-100 dark:from-emerald-950/40 dark:to-zinc-800"
+        className="relative mb-2 flex h-24 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-emerald-50 to-zinc-100 dark:from-emerald-950/40 dark:to-zinc-800"
       >
         {discount > 0 ? (
-          <span className="absolute top-2 start-2 rounded-full bg-red-600 px-2 py-0.5 text-[10px] font-bold text-white">
+          <span className="absolute top-2 start-2 z-10 rounded-full bg-red-600 px-2 py-0.5 text-[10px] font-bold text-white">
             {formatPercent(discount, locale)}
           </span>
         ) : null}
         {product.hasInstallationService ? (
-          <span className="absolute top-2 end-2 inline-flex items-center gap-0.5 rounded-full bg-emerald-600/10 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700 dark:text-emerald-300">
+          <span className="absolute top-2 end-2 z-10 inline-flex items-center gap-0.5 rounded-full bg-emerald-600/10 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700 dark:text-emerald-300">
             <Wrench className="h-2.5 w-2.5" />
             تعویض
           </span>
         ) : null}
-        <span className="line-clamp-2 px-4 text-center text-[11px] font-medium text-zinc-500 dark:text-zinc-400">
-          {product.brand ?? ""}
-        </span>
+        {product.imageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            loading="lazy"
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <span className="line-clamp-2 px-4 text-center text-[11px] font-medium text-zinc-500 dark:text-zinc-400">
+            {product.brand ?? ""}
+          </span>
+        )}
       </Link>
 
       <Link

@@ -69,20 +69,55 @@ export class OrdersService {
           },
         });
 
-        const itemSubtotal = item.quantity * product.price;
+        // Honor the product's own discount, so the paid price matches
+        // what the storefront showed (final = price − discountPercent).
+        const unitPrice = Math.round(
+          product.price * (1 - Math.min(product.discountPercent, 100) / 100),
+        );
+        const itemSubtotal = item.quantity * unitPrice;
         totalAmount += itemSubtotal;
 
         orderItemsData.push({
           productId: product.id,
           quantity: item.quantity,
-          price: product.price,
+          price: unitPrice,
+        });
+      }
+
+      // Apply the discount code (validated + applied atomically).
+      let couponId: number | null = null;
+      let discountAmount = 0;
+      if (dto.couponCode?.trim()) {
+        const coupon = await tx.coupon.findUnique({
+          where: { code: dto.couponCode.trim().toUpperCase() },
+        });
+        if (!coupon) throw new BadRequestException('کد تخفیف نامعتبر است');
+        if (!coupon.active) throw new BadRequestException('این کد تخفیف غیرفعال است');
+        if (coupon.expiresAt && coupon.expiresAt.getTime() < Date.now()) {
+          throw new BadRequestException('این کد تخفیف منقضی شده است');
+        }
+        if (coupon.usageLimit !== null && coupon.usedCount >= coupon.usageLimit) {
+          throw new BadRequestException('ظرفیت استفاده از این کد تخفیف تمام شده است');
+        }
+        if (totalAmount < coupon.minSubtotal) {
+          throw new BadRequestException(
+            `مبلغ سبد خرید باید حداقل ${coupon.minSubtotal} تومان باشد`,
+          );
+        }
+        discountAmount = this.computeCouponDiscount(coupon, totalAmount);
+        couponId = coupon.id;
+        await tx.coupon.update({
+          where: { id: coupon.id },
+          data: { usedCount: { increment: 1 } },
         });
       }
 
       const order = await tx.order.create({
         data: {
           userId,
-          totalAmount: Math.round(totalAmount * 100) / 100,
+          totalAmount: Math.round(totalAmount - discountAmount),
+          discountAmount,
+          couponId,
           shippingAddress: dto.shippingAddress,
           status: OrderStatus.PENDING,
           paymentStatus: PaymentStatus.PENDING,
@@ -116,6 +151,19 @@ export class OrdersService {
 
       return order;
     });
+  }
+
+  /** Duplicated intentionally: keeps the checkout transaction self-contained. */
+  private computeCouponDiscount(
+    coupon: { type: 'PERCENT' | 'FIXED'; value: number; maxDiscount: number | null },
+    subtotal: number
+  ): number {
+    let discount =
+      coupon.type === 'PERCENT' ? Math.round((subtotal * coupon.value) / 100) : coupon.value;
+    if (coupon.type === 'PERCENT' && coupon.maxDiscount) {
+      discount = Math.min(discount, coupon.maxDiscount);
+    }
+    return Math.min(Math.max(discount, 0), subtotal);
   }
 
   async getMyOrders(userId: number, pagination: PaginationDto) {

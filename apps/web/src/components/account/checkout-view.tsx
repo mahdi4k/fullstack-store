@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { CreditCard, PackageCheck, Truck, Wrench } from "lucide-react";
 import { api } from "@/lib/api";
 import { errorMessage } from "@/lib/error";
-import { formatMoney } from "@/lib/format";
+import { formatToman } from "@/lib/format";
 import { useCart } from "@/components/providers/cart-provider";
 import { useI18n } from "@/components/providers/locale-provider";
 import { plural } from "@/lib/i18n/dictionaries";
@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/feedback";
 import { Textarea } from "@/components/ui/textarea";
 import { SummaryRow, type CheckoutItemSummary } from "./checkout-summary-row";
-import type { Cart, Order, Product } from "@/lib/types";
+import type { Cart, CouponPreview, Order, Product } from "@/lib/types";
 
 const ADDRESS_KEY = "my-store:lastAddress";
 const GARAGE_KEY = "my-store:lastGarage";
@@ -54,6 +54,12 @@ export function CheckoutView({
   const [pageBusy, setPageBusy] = React.useState(true);
   const [busy, setBusy] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+
+  // Discount code (validated against the API before ordering).
+  const [couponInput, setCouponInput] = React.useState("");
+  const [coupon, setCoupon] = React.useState<CouponPreview | null>(null);
+  const [couponBusy, setCouponBusy] = React.useState(false);
+  const [couponError, setCouponError] = React.useState<string | null>(null);
 
   // Load whichever data source this checkout uses.
   React.useEffect(() => {
@@ -104,6 +110,32 @@ export function CheckoutView({
       }));
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const discount = coupon?.discount ?? 0;
+  const total = Math.max(subtotal - discount, 0);
+
+  const applyCoupon = async () => {
+    if (!couponInput.trim()) return;
+    setCouponBusy(true);
+    setCouponError(null);
+    try {
+      const preview = await api<CouponPreview>("/coupons/validate", {
+        method: "POST",
+        body: { code: couponInput.trim(), subtotal },
+      });
+      setCoupon(preview);
+    } catch (err) {
+      setCoupon(null);
+      setCouponError(errorMessage(err));
+    } finally {
+      setCouponBusy(false);
+    }
+  };
+
+  const removeCoupon = () => {
+    setCoupon(null);
+    setCouponInput("");
+    setCouponError(null);
+  };
 
   const placeOrder = async () => {
     setBusy(true);
@@ -112,6 +144,7 @@ export function CheckoutView({
       const body = {
         ...(finalAddress ? { shippingAddress: finalAddress } : {}),
         ...(buyNow ? { items: [{ productId, quantity: quantity ?? 1 }] } : {}),
+        ...(coupon ? { couponCode: coupon.code } : {}),
       };
       const order = await api<Order>("/orders/checkout", { method: "POST", body });
       if (typeof window !== "undefined") {
@@ -246,13 +279,66 @@ export function CheckoutView({
             ))}
           </ul>
 
+          {/* Discount code */}
+          <div className="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
+            {coupon ? (
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">
+                  {dict.checkout.coupon.applied.replace("{code}", coupon.code)}{" "}
+                  <span className="font-bold">−{formatToman(coupon.discount, locale)}</span>
+                </p>
+                <button
+                  onClick={removeCoupon}
+                  className="rounded-full px-2 py-1 text-xs text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                >
+                  {dict.checkout.coupon.remove}
+                </button>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <input
+                  value={couponInput}
+                  onChange={(e) => setCouponInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      applyCoupon();
+                    }
+                  }}
+                  placeholder={dict.checkout.coupon.placeholder}
+                  className="h-10 flex-1 rounded-xl border border-zinc-200 px-3 text-sm uppercase outline-none focus:border-emerald-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                />
+                <Button
+                  variant="outline"
+                  onClick={applyCoupon}
+                  disabled={couponBusy || !couponInput.trim()}
+                >
+                  {couponBusy ? <Spinner /> : dict.checkout.coupon.apply}
+                </Button>
+              </div>
+            )}
+            {couponError ? (
+              <p className="mt-2 text-xs font-medium text-red-600 dark:text-red-400">
+                {couponError}
+              </p>
+            ) : null}
+          </div>
+
           <div className="flex items-center justify-between rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
             <div>
               <p className="text-sm text-zinc-500 dark:text-zinc-400">
                 {plural(items.length, dict.checkout.totalItems, locale)}
               </p>
+              {discount > 0 ? (
+                <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">
+                  <span className="text-zinc-400 line-through dark:text-zinc-500">
+                    {formatToman(subtotal, locale)}
+                  </span>{" "}
+                  −{formatToman(discount, locale)}
+                </p>
+              ) : null}
               <p className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
-                {formatMoney(subtotal, locale)}
+                {formatToman(total, locale)}
               </p>
             </div>
             <Button size="lg" className="gap-2" onClick={placeOrder} disabled={busy}>

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, CheckCircle2, XCircle, PackageOpen, Box } from "lucide-react";
 import { api } from "@/lib/api";
 import { errorMessage } from "@/lib/error";
-import { formatDateTime, formatMoney } from "@/lib/format";
+import { formatDateTime, formatToman } from "@/lib/format";
 import { useI18n } from "@/components/providers/locale-provider";
 import { fill, plural } from "@/lib/i18n/dictionaries";
 import { Button } from "@/components/ui/button";
@@ -127,7 +127,7 @@ function DVContent({
 
       <div className="mt-6 grid gap-4 sm:grid-cols-3">
         <InfoBox icon={<Box className="h-4 w-4" />} label={dict.order.total}>
-          {formatMoney(order.totalAmount, locale)}
+          {formatToman(order.totalAmount, locale)}
         </InfoBox>
         <InfoBox icon={<PackageOpen className="h-4 w-4" />} label={dict.order.address}>
           {order.shippingAddress || "—"}
@@ -155,11 +155,11 @@ function DVContent({
                 {item.product?.name ?? fill(dict.order.productN, { n: item.productId }, locale)}
               </Link>
               <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                {item.quantity} × {formatMoney(item.price, locale)}
+                {item.quantity} × {formatToman(item.price, locale)}
               </p>
             </div>
             <p className="font-semibold dark:text-zinc-100">
-              {formatMoney(item.price * item.quantity, locale)}
+              {formatToman(item.price * item.quantity, locale)}
             </p>
           </li>
         ))}

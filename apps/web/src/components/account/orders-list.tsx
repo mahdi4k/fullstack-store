@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, PackageSearch } from "lucide-react";
 import { api } from "@/lib/api";
 import { errorMessage } from "@/lib/error";
-import { formatDateTime, formatMoney } from "@/lib/format";
+import { formatDateTime, formatToman } from "@/lib/format";
 import { useI18n } from "@/components/providers/locale-provider";
 import { fill, plural } from "@/lib/i18n/dictionaries";
 import { Button } from "@/components/ui/button";
@@ -107,7 +107,7 @@ export function OrdersList({ page }: { page: number }) {
               <div className="mt-4 flex items-center justify-between gap-4">
                 <OrderThumbnails order={order} />
                 <p className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-                  {formatMoney(order.totalAmount, locale)}
+                  {formatToman(order.totalAmount, locale)}
                 </p>
               </div>
             </Link>

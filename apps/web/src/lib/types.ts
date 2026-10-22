@@ -101,6 +101,8 @@ export interface Order {
   id: number;
   userId: number;
   totalAmount: number;
+  discountAmount?: number;
+  couponId?: number | null;
   status: OrderStatus;
   paymentStatus: PaymentStatus;
   shippingAddress?: string | null;
@@ -205,4 +207,48 @@ export interface StorefrontResponse {
   vendors: Vendor[];
   /** Car models that actually have parts in this city (Persian-sorted). */
   vehicles: string[];
+}
+
+/** Discount code type: percentage off or fixed Toman amount off. */
+export type CouponType = "PERCENT" | "FIXED";
+
+export interface Coupon {
+  id: number;
+  code: string;
+  type: CouponType;
+  /** percent (1-100) or Toman amount, depending on `type`. */
+  value: number;
+  minSubtotal: number;
+  maxDiscount?: number | null;
+  expiresAt?: string | null;
+  usageLimit?: number | null;
+  usedCount: number;
+  active: boolean;
+  createdAt: string;
+}
+
+/** Result of `POST /coupons/validate` (checkout preview). */
+export interface CouponPreview {
+  id: number;
+  code: string;
+  type: CouponType;
+  value: number;
+  discount: number;
+}
+
+/** Admin dashboard overview (`GET /stats`). */
+export interface StoreStats {
+  totalOrders: number;
+  pendingOrders: number;
+  todayOrders: number;
+  totalCustomers: number;
+  revenue: number;
+  lowStockProducts: Product[];
+  bestSellers: Array<{
+    productId: number;
+    name: string;
+    quantity: number;
+    orders: number;
+  }>;
+  recentOrders: Order[];
 }

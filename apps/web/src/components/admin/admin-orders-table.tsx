@@ -1,6 +1,6 @@
 "use client";
 
-import { formatDateTime, formatMoney } from "@/lib/format";
+import { formatDateTime, formatToman } from "@/lib/format";
 import { useI18n } from "@/components/providers/locale-provider";
 import { plural } from "@/lib/i18n/dictionaries";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -48,7 +48,7 @@ export function OrdersTable({
                 </span>
               </Td>
               <Td>{formatDateTime(order.createdAt, locale)}</Td>
-              <Td className="font-medium">{formatMoney(order.totalAmount, locale)}</Td>
+              <Td className="font-medium">{formatToman(order.totalAmount, locale)}</Td>
               <Td>
                 <StatusBadge status={order.status} />
                 <span className="ms-1.5">

@@ -126,6 +126,11 @@ enum ProductType {
   SERVICE_KIT
 }
 
+enum CouponType {
+  PERCENT
+  FIXED
+}
+
 model Cart {
   id        Int        @id @default(autoincrement())
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -155,11 +160,32 @@ model Order {
   items           OrderItem[]
   reviews         Review[]
   totalAmount     Float
+  discountAmount  Float         @default(0)
+  coupon          Coupon?       @relation(fields: [couponId], references: [id], onDelete: SetNull)
+  couponId        Int?
   status          OrderStatus   @default(PENDING)
   paymentStatus   PaymentStatus @default(PENDING)
   shippingAddress String?
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
+}
+
+/// Discount code applied at checkout. PERCENT takes `value` off in
+/// percent (capped by maxDiscount); FIXED takes `value` Toman off.
+model Coupon {
+  id          Int        @id @default(autoincrement())
+  code        String     @unique
+  type        CouponType @default(PERCENT)
+  value       Float
+  minSubtotal Float      @default(0)
+  maxDiscount Float?
+  expiresAt   DateTime?
+  usageLimit  Int?
+  usedCount   Int        @default(0)
+  active      Boolean    @default(true)
+  orders      Order[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 }
 
 model OrderItem {

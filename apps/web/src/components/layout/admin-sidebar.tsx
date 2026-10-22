@@ -6,6 +6,7 @@ import {
   Package,
   ShoppingCart,
   Tags,
+  Ticket,
   Users,
   LayoutDashboard,
 } from "lucide-react";
@@ -21,6 +22,7 @@ export function AdminSidebar() {
     { href: "/admin", label: dict.admin.sidebar.dashboard, icon: LayoutDashboard },
     { href: "/admin/products", label: dict.admin.sidebar.products, icon: Package },
     { href: "/admin/categories", label: dict.admin.sidebar.categories, icon: Tags },
+    { href: "/admin/coupons", label: dict.admin.sidebar.coupons, icon: Ticket },
     { href: "/admin/orders", label: dict.admin.sidebar.orders, icon: ShoppingCart },
     { href: "/admin/users", label: dict.admin.sidebar.users, icon: Users },
   ];

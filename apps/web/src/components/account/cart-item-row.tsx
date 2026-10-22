@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Minus, Plus, Trash2 } from "lucide-react";
-import { formatMoney } from "@/lib/format";
+import { formatToman } from "@/lib/format";
 import { useI18n } from "@/components/providers/locale-provider";
 import { ProductImage } from "@/components/store/product-image";
 import type { CartItem } from "@/lib/types";
@@ -43,7 +43,7 @@ export function CartItemRow({
           {item.product.name}
         </Link>
         <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">
-          {formatMoney(item.product.price, locale)} {dict.cart.each}
+          {formatToman(item.product.price, locale)} {dict.cart.each}
         </p>
       </div>
 
@@ -68,7 +68,7 @@ export function CartItemRow({
       </div>
 
       <p className="w-20 text-end font-semibold text-zinc-900 dark:text-zinc-50">
-        {formatMoney(item.total, locale)}
+        {formatToman(item.total, locale)}
       </p>
 
       <button

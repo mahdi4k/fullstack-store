@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, ShoppingCart, Trash2 } from "lucide-react";
 import { api } from "@/lib/api";
 import { errorMessage } from "@/lib/error";
-import { formatMoney } from "@/lib/format";
+import { formatToman } from "@/lib/format";
 import { useCart } from "@/components/providers/cart-provider";
 import { useI18n } from "@/components/providers/locale-provider";
 import { plural } from "@/lib/i18n/dictionaries";
@@ -142,7 +142,7 @@ export function CartView() {
         <div>
           <p className="text-sm text-zinc-500 dark:text-zinc-400">{dict.cart.subtotal}</p>
           <p className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
-            {formatMoney(cart?.subtotal ?? 0, locale)}
+            {formatToman(cart?.subtotal ?? 0, locale)}
           </p>
         </div>
         <Button size="lg" className="gap-2" onClick={() => router.push(lp("/checkout"))}>

@@ -29,4 +29,12 @@ export class CheckoutDto {
   @ValidateNested({ each: true })
   @Type(() => CheckoutItemDto)
   items?: CheckoutItemDto[];
+
+  @ApiPropertyOptional({
+    description: 'Optional discount code to apply to the order total.',
+    example: 'NOWRUZ1400',
+  })
+  @IsOptional()
+  @IsString()
+  couponCode?: string;
 }

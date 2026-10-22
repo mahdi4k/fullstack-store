@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { api } from "@/lib/api";
 import { errorMessage } from "@/lib/error";
-import { formatMoney } from "@/lib/format";
+import { formatToman } from "@/lib/format";
 import { useI18n } from "@/components/providers/locale-provider";
 import { fill } from "@/lib/i18n/dictionaries";
 import { Button } from "@/components/ui/button";
@@ -122,7 +122,7 @@ export function AdminProductsView() {
                     {product.name}
                   </Td>
                   <Td>{product.category?.name ?? "—"}</Td>
-                  <Td className="font-medium">{formatMoney(product.price, locale)}</Td>
+                  <Td className="font-medium">{formatToman(product.price, locale)}</Td>
                   <Td>
                     {product.stock > 0 ? (
                       product.stock

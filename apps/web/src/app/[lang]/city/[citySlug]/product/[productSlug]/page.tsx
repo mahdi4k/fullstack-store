@@ -64,14 +64,21 @@ async function ProductContent({ params }: PageProps) {
     >
       <StorefrontHeader citySlug={citySlug} cityName={city.name} />
 
-      {/* Gallery placeholder */}
+      {/* Photo, or gradient placeholder until supplier images arrive */}
       <div className="relative mt-3 flex h-64 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-50 to-zinc-100 dark:from-emerald-950/40 dark:to-zinc-800">
         {discount > 0 ? (
-          <span className="absolute top-3 start-3 rounded-full bg-red-600 px-2.5 py-1 text-[11px] font-bold text-white">
+          <span className="absolute top-3 start-3 z-10 rounded-full bg-red-600 px-2.5 py-1 text-[11px] font-bold text-white">
             {formatPercent(discount, lang)}
           </span>
         ) : null}
-        {product.brand ? (
+        {product.imageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            className="h-full w-full object-cover"
+          />
+        ) : product.brand ? (
           <span className="text-lg font-bold text-zinc-400">{product.brand}</span>
         ) : null}
       </div>

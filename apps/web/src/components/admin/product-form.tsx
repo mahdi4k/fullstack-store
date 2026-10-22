@@ -22,6 +22,8 @@ interface FormState {
   stock: string;
   imageUrl: string;
   categoryId: string;
+  discountPercent: string;
+  compatibleVehicles: string;
 }
 
 /** Create/edit product form (`POST /products` or `PATCH /products/:id`). */
@@ -44,6 +46,8 @@ export function ProductForm({
     stock: product ? String(product.stock) : "0",
     imageUrl: product?.imageUrl ?? "",
     categoryId: product?.categoryId ? String(product.categoryId) : "",
+    discountPercent: product ? String(product.discountPercent ?? 0) : "0",
+    compatibleVehicles: (product?.compatibleVehicles ?? []).join("، "),
   });
   const [busy, setBusy] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
@@ -73,6 +77,11 @@ export function ProductForm({
         ...(form.description.trim() ? { description: form.description.trim() } : {}),
         price: Number(form.price),
         stock: Number(form.stock || 0),
+        discountPercent: Math.min(Math.max(Number(form.discountPercent || 0), 0), 100),
+        compatibleVehicles: form.compatibleVehicles
+          .split(/[،,]|\s+/)
+          .map((entry) => entry.trim())
+          .filter(Boolean),
         ...(form.imageUrl.trim() ? { imageUrl: form.imageUrl.trim() } : {}),
         ...(form.categoryId ? { categoryId: Number(form.categoryId) } : {}),
       };
@@ -148,6 +157,33 @@ export function ProductForm({
             onChange={(e) => set("stock")(e.target.value)}
           />
         </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-1.5">
+          <Label htmlFor="product-discount">{t.discountPercent}</Label>
+          <Input
+            id="product-discount"
+            type="number"
+            min="0"
+            max="100"
+            step="1"
+            value={form.discountPercent}
+            onChange={(e) => set("discountPercent")(e.target.value)}
+            placeholder="0"
+          />
+        </div>
+      </div>
+
+      <div className="space-y-1.5">
+        <Label htmlFor="product-vehicles">{t.compatibleVehicles}</Label>
+        <Input
+          id="product-vehicles"
+          value={form.compatibleVehicles}
+          onChange={(e) => set("compatibleVehicles")(e.target.value)}
+          placeholder={t.compatibleVehiclesHint}
+        />
+        <p className="text-xs text-zinc-400">{t.compatibleVehiclesHelp}</p>
       </div>
 
       <div className="space-y-1.5">

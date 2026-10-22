@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { formatMoney } from "@/lib/format";
+import { formatToman } from "@/lib/format";
 import { serverLocale } from "@/lib/i18n/server";
 import { fill, getDictionary, plural } from "@/lib/i18n/dictionaries";
 import { localePath } from "@/lib/i18n/config";
@@ -44,7 +44,7 @@ export async function ProductCard({ product }: { product: Product }) {
         ) : null}
         <div className="mt-auto flex items-center justify-between pt-2">
           <span className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-            {formatMoney(product.price, locale)}
+            {formatToman(product.price, locale)}
           </span>
           {product.stock > 0 ? (
             <span className="text-xs text-emerald-600 dark:text-emerald-400">
