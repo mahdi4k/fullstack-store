@@ -15,6 +15,8 @@ import { StickyCartBar } from "@/components/storefront/sticky-cart-bar";
 import { SupportBar } from "@/components/storefront/support-bar";
 import { SectionHeader } from "@/components/storefront/section-header";
 import { getDictionary, hasLocale } from "@/lib/i18n/dictionaries";
+import { cookies } from "next/headers";
+import { CAR_COOKIE } from "@/lib/city";
 
 export async function generateMetadata({
   params,
@@ -47,11 +49,19 @@ async function StorefrontContent({ params }: PageProps) {
   if (!hasLocale(lang)) notFound();
   const dict = getDictionary(lang);
 
+  const jar = await cookies();
+  const rawCar = jar.get(CAR_COOKIE)?.value;
+  const car = rawCar ? decodeURIComponent(rawCar) : null;
+
   const storefront = await fetchStorefront(citySlug);
   const city = storefront.city;
 
   // Special offers: discounted products in this city (fire pill rail).
-  const offers = await fetchCityProducts({ city: citySlug, limit: 30 }).then(
+  const offers = await fetchCityProducts({
+    city: citySlug,
+    limit: 30,
+    vehicle: car ?? undefined,
+  }).then(
     (res) =>
       [...res.data]
         .filter((p) => (p.discountPercent ?? 0) > 0)
@@ -64,7 +74,12 @@ async function StorefrontContent({ params }: PageProps) {
       lang={lang}
       className="mx-auto min-h-dvh max-w-md bg-white px-4 pb-32 dark:bg-zinc-950 md:max-w-xl"
     >
-      <StorefrontHeader citySlug={city.slug} cityName={city.name} />
+      <StorefrontHeader
+        citySlug={city.slug}
+        cityName={city.name}
+        car={car}
+        vehicles={storefront.vehicles}
+      />
 
       <div className="space-y-4 pt-3">
         {/* Live search by product name or car model */}
@@ -86,7 +101,12 @@ async function StorefrontContent({ params }: PageProps) {
         <ProductRail
           title={dict.store.sections.servicePacks}
           citySlug={city.slug}
-          products={storefront.bundles}
+          products={storefront.bundles.filter(
+            (bundle) =>
+              !car ||
+              (bundle.compatibleVehicles ?? []).length === 0 ||
+              (bundle.compatibleVehicles ?? []).includes(car)
+          )}
           viewAllHref={`/${lang}/city/${city.slug}/category/oils-lubricants`}
         />
 

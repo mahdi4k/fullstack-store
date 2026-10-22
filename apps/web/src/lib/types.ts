@@ -203,4 +203,6 @@ export interface StorefrontResponse {
   categories: StorefrontCategory[];
   bundles: Product[];
   vendors: Vendor[];
+  /** Car models that actually have parts in this city (Persian-sorted). */
+  vehicles: string[];
 }

@@ -43,7 +43,12 @@ export class ProductsService {
     }
 
     if (query.vehicle) {
-      where.compatibleVehicles = { has: query.vehicle };
+      // Vehicle fit: products that list this vehicle, or universal items
+      // with no compatible-vehicles list at all.
+      where.OR = [
+        { compatibleVehicles: { has: query.vehicle } },
+        { compatibleVehicles: { isEmpty: true } },
+      ];
     }
 
     if (query.brand) {

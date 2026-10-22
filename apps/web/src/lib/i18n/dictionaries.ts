@@ -416,8 +416,14 @@ const en = {
       subtitle: "To show prices and stock for your city",
       confirm: "Confirm",
     },
+    car: {
+      choose: "Select your car model",
+      allCars: "All cars",
+      subtitle: "Show only parts and service packs that fit",
+    },
     header: {
       menu: "Menu",
+      allCars: "All cars",
       searchPlaceholder: "Search…",
       searchAria: "Search products or car model",
       cart: "Cart",
@@ -883,8 +889,14 @@ const fa: Dictionary = {
       subtitle: "برای نمایش قیمت و موجودی مخصوص شهر شما",
       confirm: "تأیید",
     },
+    car: {
+      choose: "انتخاب خودروی شما",
+      allCars: "همه خودروها",
+      subtitle: "فقط کالاهای مناسب خودروی شما نمایش داده می‌شود",
+    },
     header: {
       menu: "منو",
+      allCars: "همه خودروها",
       searchPlaceholder: "جستجو ...",
       searchAria: "جستجوی محصول یا مدل خودرو",
       cart: "سبد خرید",

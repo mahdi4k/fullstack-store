@@ -11,6 +11,8 @@ import { QuickFilterPills } from "@/components/storefront/quick-filter-pills";
 import { SearchBar } from "@/components/storefront/search-bar";
 import { StickyCartBar } from "@/components/storefront/sticky-cart-bar";
 import { hasLocale, getDictionary } from "@/lib/i18n/dictionaries";
+import { cookies } from "next/headers";
+import { CAR_COOKIE } from "@/lib/city";
 import type { Product } from "@/lib/types";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
@@ -45,6 +47,9 @@ async function CategoryContent({ params, searchParams }: PageProps) {
     Array.isArray(value) ? value[0] : (value ?? "");
 
   const dict = getDictionary(lang);
+  const jar = await cookies();
+  const rawCar = jar.get(CAR_COOKIE)?.value;
+  const car = rawCar ? decodeURIComponent(rawCar) : null;
   const q = asString(sp.q);
   const brand = asString(sp.brand);
   const vehicle = asString(sp.vehicle);
@@ -70,7 +75,8 @@ async function CategoryContent({ params, searchParams }: PageProps) {
     query.category = categorySlug;
   }
   if (brand) query.brand = brand;
-  if (vehicle) query.vehicle = vehicle;
+  // Selected car model (cookie) also applies in any listing.
+  query.vehicle = vehicle || car || undefined;
 
   const { data } = await fetchCityProducts(query);
 
@@ -98,7 +104,12 @@ async function CategoryContent({ params, searchParams }: PageProps) {
       lang={lang}
       className="mx-auto min-h-dvh max-w-md bg-white px-4 pb-32 dark:bg-zinc-950 md:max-w-xl"
     >
-      <StorefrontHeader citySlug={citySlug} cityName={city.name} />
+      <StorefrontHeader
+        citySlug={citySlug}
+        cityName={city.name}
+        car={car}
+        vehicles={vehicles}
+      />
 
       {/* Search field only on the search pseudo-category */}
       {categorySlug === "search" ? (

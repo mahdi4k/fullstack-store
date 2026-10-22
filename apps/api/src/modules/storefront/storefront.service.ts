@@ -22,7 +22,13 @@ export class StorefrontService {
       throw new NotFoundException(`City "${citySlug}" not found or inactive`);
     }
 
-    const [banners, categories, bundles, vendors] = await Promise.all([
+    const [
+      banners,
+      categories,
+      bundles,
+      vendors,
+      vehicleRows,
+    ] = await Promise.all([
       // Banners targeted at this city plus global ones (cityId = null).
       this.prisma.banner.findMany({
         where: { active: true, OR: [{ cityId: city.id }, { cityId: null }] },
@@ -78,7 +84,22 @@ export class StorefrontService {
         orderBy: { rating: 'desc' },
         take: 10,
       }),
+
+      // Distinct car models that have products in this city (for the
+      // vehicle-selection sheet — no point listing cars we can't serve).
+      this.prisma.product.findMany({
+        where: {
+          cityProducts: { some: { cityId: city.id, active: true } },
+          NOT: { compatibleVehicles: { isEmpty: true } },
+        },
+        select: { compatibleVehicles: true },
+      }),
     ]);
+
+    // Flatten ["پراید", "پژو 405"] arrays into a distinct, sorted model list.
+    const vehicles = [
+      ...new Set(vehicleRows.flatMap((row) => row.compatibleVehicles)),
+    ].sort((a, b) => a.localeCompare(b, 'fa'));
 
     return {
       city: {
@@ -93,6 +114,7 @@ export class StorefrontService {
       })),
       bundles: bundles.map((product) => this.applyCityPricing(product)),
       vendors,
+      vehicles,
     };
   }
 

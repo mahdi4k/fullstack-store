@@ -1,6 +1,9 @@
 /** Cookie that remembers the visitor's chosen city. */
 export const CITY_COOKIE = "city";
 
+/** Cookie that remembers the visitor's chosen car model (empty = all cars). */
+export const CAR_COOKIE = "car";
+
 /** City used when nothing is chosen yet (Isfahan — user's home city). */
 export const DEFAULT_CITY = "isfahan";
 
