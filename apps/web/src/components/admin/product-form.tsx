@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/feedback";
+import { ProductImage } from "@/components/store/product-image";
 import { Textarea } from "@/components/ui/textarea";
 import type { Category, ProductDetail } from "@/lib/types";
 
@@ -211,6 +212,17 @@ export function ProductForm({
           onChange={(e) => set("imageUrl")(e.target.value)}
           placeholder="https://example.com/images/headphones.jpg"
         />
+        {/* Live preview of the image URL (saved or being typed). */}
+        <div className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-zinc-50 p-2 dark:border-zinc-700 dark:bg-zinc-800">
+          <ProductImage
+            src={form.imageUrl.trim() || product?.imageUrl || null}
+            alt={product?.name ?? form.name}
+            className="h-20 w-20 shrink-0 rounded-lg"
+          />
+          <p className="line-clamp-2 break-all text-xs text-zinc-500 dark:text-zinc-400">
+            {form.imageUrl.trim() || product?.imageUrl || t.noImage}
+          </p>
+        </div>
       </div>
 
       {error ? (
