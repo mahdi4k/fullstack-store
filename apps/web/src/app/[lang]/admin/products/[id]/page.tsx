@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { ProductForm } from "@/components/admin/product-form";
 import { fetchProduct } from "@/lib/queries";
 import type { ProductDetail } from "@/lib/types";
@@ -10,7 +11,21 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: dict.admin.products.edit };
 }
 
-export default async function EditProductPage({
+export default function EditProductPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  return (
+    <Suspense fallback={<EditSkeleton />}>
+      <EditProductContent params={params} />
+    </Suspense>
+  );
+}
+
+/** The product fetch happens here, inside Suspense, so the shell
+ * renders instantly and the validator can keep the segment. */
+async function EditProductContent({
   params,
 }: {
   params: Promise<{ id: string }>;
@@ -34,6 +49,19 @@ export default async function EditProductPage({
       </h1>
       <div className="mt-6">
         <ProductForm product={product} productId={productId} />
+      </div>
+    </div>
+  );
+}
+
+function EditSkeleton() {
+  return (
+    <div className="mx-auto max-w-xl animate-pulse space-y-4">
+      <div className="h-8 w-64 rounded-lg bg-zinc-200 dark:bg-zinc-800" />
+      <div className="space-y-3 rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
+        {Array.from({ length: 5 }, (_, i) => (
+          <div key={i} className="h-10 w-full rounded-lg bg-zinc-100 dark:bg-zinc-800" />
+        ))}
       </div>
     </div>
   );
