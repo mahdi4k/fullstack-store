@@ -42,7 +42,7 @@ const connectionString = process.env.DATABASE_URL;
 if (!connectionString) {
   throw new Error('DATABASE_URL environment variable is missing');
 }
-const prisma = new PrismaClient({ adapter: PrismaPg({ connectionString }) });
+const prisma = new PrismaClient({ adapter: new PrismaPg({ connectionString }) });
 
 async function main() {
   let entries;
@@ -70,7 +70,7 @@ async function main() {
     where: { slug: { in: slugs } },
     select: { id: true, slug: true },
   });
-  const bySlug = new Map(products.map((product) => [product.slug, product.id]));
+  const idBySlug = new Map(products.map((product) => [product.slug, product.id]));
 
   if (!DRY_RUN) {
     await mkdir(DEST_DIR, { recursive: true });
@@ -81,8 +81,8 @@ async function main() {
   for (const file of files) {
     const ext = path.extname(file.name).toLowerCase();
     const slug = path.basename(file.name, ext);
-    const product = bySlug.get(slug);
-    if (!product) {
+    const productId = idBySlug.get(slug);
+    if (productId === undefined) {
       unknown.push(file.name);
       continue;
     }
@@ -90,7 +90,7 @@ async function main() {
     if (!DRY_RUN) {
       await copyFile(path.join(SOURCE_DIR, file.name), path.join(DEST_DIR, `${slug}${ext}`));
       await prisma.product.update({
-        where: { id: product.id },
+        where: { id: productId },
         data: { imageUrl: url },
       });
     }
